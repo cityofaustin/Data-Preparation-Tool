@@ -737,8 +737,7 @@ def closeAbout():
 def toggleItems(bool: bool):
     uiToggleItems = [ui.menu_save, ui.menu_trim,
     ui.actionTrim_digits, ui.menu_nullVals,
-    ui.btnDropCol, ui.btnRename, ui.menu_desc, ui.menu_info, 
-    ui.btnChangeType]
+    ui.btnDropCol, ui.btnRename, ui.menu_desc, ui.menu_info]
 
     if bool:
         for item in uiToggleItems:
