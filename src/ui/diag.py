@@ -100,7 +100,7 @@ class Ui_aboutWindow(object):
         aboutWindow.setWindowTitle(_translate("aboutWindow", "About"))
         self.lblVersion.setText(_translate("aboutWindow", "Version 1.0"))
         self.label_3.setText(_translate("aboutWindow", "2022 City of Austin Innovation Office"))
-        self.label.setText(_translate("aboutWindow", "<a href=\"https://github.com/cityofaustin/Data-Cleaner-Tool/blob/main/userguide/README.md\">User Guide</a>"))
+        self.label.setText(_translate("aboutWindow", "<a href=\"https://github.com/cityofaustin/Data-Preparation-Tool/blob/main/userguide/README.md\">User Guide</a>"))
         self.groupBox.setTitle(_translate("aboutWindow", "Built using the following libraries:"))
         __sortingEnabled = self.listWidget.isSortingEnabled()
         self.listWidget.setSortingEnabled(False)

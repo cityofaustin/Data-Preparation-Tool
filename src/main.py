@@ -85,7 +85,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 pass
     
     def launchHelp(self):
-        webbrowser.open('https://github.com/cityofaustin/Data-Cleaner-Tool/blob/main/userguide/README.md', new=2)
+        webbrowser.open('https://github.com/cityofaustin/Data-Preparation-Tool/blob/main/userguide/README.md', new=2)
 
 class aboutWindow(QtWidgets.QMainWindow, Ui_aboutWindow):
     def __init__(self):

@@ -95,7 +95,7 @@
        </font>
       </property>
       <property name="text">
-       <string>&lt;a href=&quot;https://github.com/cityofaustin/TagTool/tree/main/userguide&quot;&gt;User Guide&lt;/a&gt;</string>
+       <string>&lt;a href=&quot;https://github.com/cityofaustin/Data-Preparation-Tool/blob/main/userguide/README.md&quot;&gt;User Guide&lt;/a&gt;</string>
       </property>
       <property name="openExternalLinks">
        <bool>true</bool>
