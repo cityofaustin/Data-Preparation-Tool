@@ -24,6 +24,11 @@ platName = platform.system()
 dataLoc = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.DataLocation)[0] + f'/{appName}'
 desktopLoc = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.DesktopLocation)[0]
 
+try:
+    resPath = sys._MEIPASS
+except Exception:
+    resPath = os.path.dirname(__file__)
+
 # Window classes
 class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -655,7 +660,7 @@ def loadData():
         if platName == 'Darwin':
             readDat(f'{appPath}/res.dat')
         else:
-            readDat('res.dat')
+            readDat(f'{resPath}/res.dat')
         
         app.setWindowIcon(iconFromBase64(bytes(iconDict['icon.png'], encoding='utf8')))
         ui.menu_openFile.setIcon(iconFromBase64(bytes(iconDict['folder.png'], encoding='utf8')))
