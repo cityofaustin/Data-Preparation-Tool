@@ -40,6 +40,22 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="btnChangeType">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Change Data Type</string>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="btnRename">
         <property name="enabled">
          <bool>false</bool>

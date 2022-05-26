@@ -2,6 +2,7 @@
 DataCleanTool - 2022
 author: SappI
 '''
+from distutils import errors
 import os, sys, pickle, platform, io
 import pandas as pd
 import webbrowser
@@ -15,6 +16,7 @@ from ui.trimWindow import Ui_trimWindow
 from ui.nullWindow2 import Ui_nullValueWin
 from ui.renameColWindow import Ui_renameColumnWindow
 from ui.desc_info import Ui_desc_infoWindow
+from ui.typeWindow import Ui_typeWindow
 
 # Update this with each release
 appName = "Data Preparation Tool"
@@ -54,7 +56,8 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.menu_desc.triggered.connect(lambda: uiDesc_Info.openWindow(True))
         self.menu_info.triggered.connect(lambda: uiDesc_Info.openWindow(False))
         self.menu_help.triggered.connect(lambda: self.launchHelp())
-
+        #self.btnSort.clicked.connect(lambda: self.sort())
+        self.btnChangeType.clicked.connect(lambda: uiTypeWindow.confirmTypeChange())
     def cell_was_clicked(self, row, column):
         global activeColumn
         print(activeColumn)
@@ -92,6 +95,28 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def launchHelp(self):
         webbrowser.open('https://github.com/cityofaustin/Data-Preparation-Tool/blob/main/userguide/README.md', new=2)
 
+    def sort(self):
+        global df
+        global sortInfo
+
+        if sortInfo.headerData[activeColumn] == 0:
+            setUndo(df, undoRedoInfo.undoDF)
+            headerName = str(list(df)[activeColumn])
+            df.loc[pd.to_numeric(df[headerName], errors='coerce').sort_values().index]
+            #df.sort_values(by=[headerName], inplace=True)
+            sortInfo.headerData[activeColumn] = 1
+            write_dt_to_qTable(df, table)
+            print(sortInfo.headerData)
+        else:
+            setUndo(df, undoRedoInfo.undoDF)
+            headerName = str(list(df)[activeColumn])
+            df.sort_values(by=[headerName], ascending=False, inplace=True)
+            sortInfo.headerData[activeColumn] = 0
+            write_dt_to_qTable(df, table)
+            print(sortInfo.headerData)
+
+
+
 class aboutWindow(QtWidgets.QMainWindow, Ui_aboutWindow):
     def __init__(self):
         super(aboutWindow, self).__init__()
@@ -104,10 +129,13 @@ class desc_infoWindow(QtWidgets.QMainWindow, Ui_desc_infoWindow):
     def __init__(self):
         super(desc_infoWindow, self).__init__()
         self.setupUi(self)
+        self.btnClose.clicked.connect(lambda: self.closeWindow())
+        self.btnExport.clicked.connect(lambda: self.exportCSV())
 
     def openWindow(self, isDesc: bool):
         global df
-        if isDesc:            
+        if isDesc:
+            self.btnExport.setVisible(True)
             self.txtInfo.setText("")
             self.setWindowTitle("Describe")
             descText = str(df.describe())
@@ -115,6 +143,7 @@ class desc_infoWindow(QtWidgets.QMainWindow, Ui_desc_infoWindow):
             self.txtInfo.setText(descText)
             self.show()
         else:
+            self.btnExport.setVisible(False)
             self.txtInfo.setText("")
             self.setWindowTitle("Info")
             buffer = io.StringIO()
@@ -126,6 +155,18 @@ class desc_infoWindow(QtWidgets.QMainWindow, Ui_desc_infoWindow):
             #print(str(s.split("\n")))
             self.txtInfo.setText(str(s))
             self.show()
+
+    def closeWindow(self):
+        self.close()
+
+    def exportCSV(self):
+        global df
+        try:
+            filename = QtWidgets.QFileDialog.getSaveFileName(None, 'Save File', desktopLoc, "CSV Files(*.csv)")[0]
+            df.describe().to_csv(str(filename), index=True)
+        except:
+            pass
+
 
 class nullWindow(QtWidgets.QMainWindow, Ui_nullValueWin):
     def __init__(self):
@@ -250,6 +291,26 @@ class pageSelect(QtWidgets.QMainWindow, Ui_pageWindow):
         self.btnBack.clicked.connect(lambda: changePage(True))
         self.btnOpen.clicked.connect(openPage)
 
+
+class typeWindow(QtWidgets.QMainWindow, Ui_typeWindow):
+    def __init__(self):
+        super(typeWindow, self).__init__()
+        self.setupUi(self)
+        self.btnCancel.clicked.connect(lambda: self.closeWindow())
+
+    def closeWindow(self):
+        self.close()
+
+    def confirmTypeChange(self):
+        global df
+        headers = list(df)
+        selectedColumn = headers[activeColumn]
+
+        try:
+            df[selectedColumn] = df[selectedColumn].astype(float).astype('int64')
+        except Exception as ex:
+            print(ex)
+
 class renameColumn(QtWidgets.QMainWindow, Ui_renameColumnWindow):
     def __init__(self):
         super(renameColumn, self).__init__()
@@ -298,6 +359,21 @@ class undoRedo:
         self.undoDF = pd.DataFrame()
         self.redoDF = pd.DataFrame()
 
+class sortData:
+    def __init__(self):
+        self.headerData = []
+        self.redoheaderData = []
+        self.undoheaderData = []
+    
+    def populateLists(self, headers):
+        # Run this when loading in a file. Create a list that is the length of
+        # the number of headers in the DF. It is intially populated with 0s
+        # but are changed to 1 when sorting. This keeps track of each columns
+        # sort status (0 = ascending or 1 = descending)
+        self.headerData.clear()
+        for header in headers:
+            self.headerData.append(0)
+
 # Globals
 df = pd.DataFrame
 dfNew = pd.DataFrame
@@ -312,6 +388,7 @@ excelFile = ''
 trimInfo = trimData()
 nullInfo = nullData()
 undoRedoInfo = undoRedo()
+sortInfo = sortData()
 
 # Data from res.dat will be stored in this dictionary
 iconDict = {}
@@ -339,6 +416,7 @@ def readDat(datFile: str):
 def setUndo(origDF: pd.DataFrame, UndoDF: pd.DataFrame):
     global df
     undoRedoInfo.undoDF = df.copy()
+    sortInfo.undoheaderData = list(sortInfo.headerData)
     ui.menu_undo.setEnabled(True)
     ui.menu_redo.setEnabled(False)
 
@@ -346,7 +424,11 @@ def doUndo():
     global df
     global table
     undoRedoInfo.redoDF = df.copy()
+    sortInfo.redoheaderData = list(sortInfo.headerData)
     df = undoRedoInfo.undoDF
+    print(sortInfo.headerData)
+    sortInfo.headerData = list(sortInfo.undoheaderData)
+    print(sortInfo.headerData)
     write_dt_to_qTable(df, table)
     ui.menu_undo.setEnabled(False)
     ui.menu_redo.setEnabled(True)
@@ -355,7 +437,9 @@ def doRedo():
     global df
     global table
     undoRedoInfo.undoDF = df.copy()
+    sortInfo.undoheaderData = list(sortInfo.headerData)
     df = undoRedoInfo.redoDF
+    sortInfo.headerData = list(sortInfo.undoheaderData)
     write_dt_to_qTable(df, table)
     ui.menu_undo.setEnabled(True)
     ui.menu_redo.setEnabled(False)
@@ -386,6 +470,7 @@ def confirmDrop(text: str, title: str):
             setUndo(df, undoRedoInfo.undoDF)
             df.drop(columns=[df.columns[activeColumn]], inplace=True)
             write_dt_to_qTable(df, table)
+            sortInfo.headerData.pop(activeColumn)
         except:
             pass
 
@@ -455,14 +540,14 @@ def commitNullValues():
         if not nullInfo.isIgnore1:
             for col in df:
                 if df[col].dtypes in ("int", "float"):
-                    df[col] = df[col].fillna(str(uiNullWindow.txtCustom.text()))
-
+                    df[col] = df[col].fillna(int(uiNullWindow.txtCustom.text()))
+                    df[col] = df[col].astype('float64', copy=False, errors='ignore')
     elif nullInfo.isCustom1 == False:
         if not nullInfo.isIgnore1:
             for col in df:
                 if df[col].dtypes in ("int", "float"):
                     df[col] = df[col].fillna(str(nullInfo.nullVal1))
-
+                    df[col] = df[col].astype('float64', copy=False, errors='ignore')
     if nullInfo.isCustom2 == True:
         if not nullInfo.isIgnore2:
             for col in df:
@@ -535,8 +620,12 @@ def openPage():
     # Store the contents of dfPage into the primary
     # df object and write it to the table.
     df = dfPage
-    df.fillna('', inplace=True)
     write_dt_to_qTable(df, table)
+    toggleItems(True)
+    headers = list(df)
+    sortInfo.populateLists(headers)
+    trimInfo.trimText = ui.tableWidget.item(0, activeColumn).text()
+    
     ui.btnRename.setEnabled(True)
 
 def openFile():
@@ -554,6 +643,8 @@ def openFile():
                 write_dt_to_qTable(df, table)
                 fileLoaded = True
                 toggleItems(True)
+                headers = list(df)
+                sortInfo.populateLists(headers)
                 trimInfo.trimText = ui.tableWidget.item(0, activeColumn).text()
             except:
                 errorMessage("Error opening file", "Error")
@@ -567,6 +658,8 @@ def openFile():
                 write_dt_to_qTable(df, table)
                 fileLoaded = True
                 toggleItems(True)
+                headers = list(df)
+                sortInfo.populateLists(headers)
                 trimInfo.trimText = ui.tableWidget.item(0, activeColumn).text()
             # If there are more than 1 page in the excel file
             # we then run it through the select page screen
@@ -590,9 +683,6 @@ def write_dt_to_qTable(df: pd.DataFrame, table: QtWidgets.QTableWidgetItem):
         else:
             headersShorten.append(str(header))
     
-
-    
-
     table.setRowCount(df.shape[0])
     table.setColumnCount(df.shape[1])
     table.setHorizontalHeaderLabels(headers)
@@ -603,6 +693,7 @@ def write_dt_to_qTable(df: pd.DataFrame, table: QtWidgets.QTableWidgetItem):
         table.horizontalHeaderItem(i).setToolTip(str(header))
 
     table.setHorizontalHeaderLabels(headersShorten)
+    
 
     df_array = df.values
     for row in range(df.shape[0]):
@@ -646,7 +737,8 @@ def closeAbout():
 def toggleItems(bool: bool):
     uiToggleItems = [ui.menu_save, ui.menu_trim,
     ui.actionTrim_digits, ui.menu_nullVals,
-    ui.btnDropCol, ui.btnRename, ui.menu_desc, ui.menu_info]
+    ui.btnDropCol, ui.btnRename, ui.menu_desc, ui.menu_info, 
+    ui.btnChangeType]
 
     if bool:
         for item in uiToggleItems:
@@ -673,7 +765,7 @@ def loadData():
         ui.menu_help.setIcon(iconFromBase64(bytes(iconDict['help.png'], encoding='utf8')))
         ui.menu_desc.setIcon(iconFromBase64(bytes(iconDict['desc.png'], encoding='utf8')))
         ui.menu_info.setIcon(iconFromBase64(bytes(iconDict['info.png'], encoding='utf8')))
-        ui.btnSort.setIcon(QtGui.QIcon('sort.png'))
+        ui.btnSort.setIcon(iconFromBase64(bytes(iconDict['sort.png'], encoding='utf8')))
     except:
         errorMessage('Could not load res.dat\nApplication will still run without graphical icons and logos.', 'Error')
         uiDiag.pixLogo.setText("Data Preparation Tool")
@@ -686,6 +778,7 @@ uiTrimWindow = trimWindow()
 uiNullWindow = nullWindow()
 uiRenameCol = renameColumn()
 uiDesc_Info = desc_infoWindow()
+uiTypeWindow = typeWindow()
 
 # Variables
 table = ui.tableWidget

@@ -26,7 +26,7 @@ def based64(image):
 
 
 icons = ['folder.png', 'saveIcon.svg', 'trimIcon.svg', 'logo.png', 'icon.png', 'null.png', 
-'undo.png', 'redo.png', 'help.png', 'info.png', 'desc.png']
+'undo.png', 'redo.png', 'help.png', 'info.png', 'desc.png', 'sort.png']
 dict = {}
 
 for item in icons:

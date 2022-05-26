@@ -4,7 +4,10 @@ import os
 df = pd.read_csv("TEST2.csv")
 
 headers = list(df)
-
-
-print(df.iloc[:,4].dtypes)
-print(os.path.dirname(__file__))
+print(headers)
+try:
+    df['ID'] = df['ID'].fillna(0)
+    df['ID'] = df['ID'].astype(float).astype('int64')
+    print(df['ID'])
+except Exception as ex:
+    print(ex)

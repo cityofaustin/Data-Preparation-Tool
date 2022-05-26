@@ -1,2 +1,1 @@
-
-        self.isCustom2 = False
+populateLists
