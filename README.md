@@ -1,6 +1,6 @@
 ### City of Austin Innovation Office
 
-# Data Preparation Tool 🧼
+# Data Preparation Tool
 
 ---
 
