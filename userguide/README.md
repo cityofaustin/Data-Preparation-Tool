@@ -1,8 +1,9 @@
 ### City of Austin Innovation Office
 
 # Data Preparation Tool Guide
-
----
+**Quick links**  
+[Opening a file](#opening-a-file) | [Trim Column](#trim-column) | [Set Null Values](#set-null-values) | [Describe](#describe) | [Info](#info) | [Sort](#sort)  
+[Change Data Type](#change-data-type)  | [Rename selected column](#rename-selected-column) | [Delete selected column](#delete-selected-column) | [Help button](#help-button)
 
 ### Opening a file
 
