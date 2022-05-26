@@ -258,7 +258,7 @@ class renameColumn(QtWidgets.QMainWindow, Ui_renameColumnWindow):
         self.btnOkay.clicked.connect(lambda: self.renameCol(df))
 
     def displayWindow(self):
-        txt = table.horizontalHeaderItem(activeColumn).text()
+        txt = list(df)[activeColumn]
         self.txtRename.setText(txt)
         self.show()
 
