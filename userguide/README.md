@@ -1,16 +1,20 @@
 ### City of Austin Innovation Office
 
-# Data Preparation Tool Guide🏷️
+# Data Preparation Tool Guide
 
 ---
 
 ### Opening a file
 
-First step is to open a file. Data Preparation accepts both **CSV** and **Excel** files. When opening a CSV file or an Excel document with a single page, the results will be loaded into the main table.
+First step is to open a file. Data Preparation Tool accepts both **CSV** and **Excel** files. When opening a CSV file or an Excel document with a single page, the results will be loaded into the main table.
 
 If the Excel file has multiple pages, you will be presented with the **Select Page window**. This will preview the pages in the document. You can go forward and back until you get to the page you'd like to work with, and click on **Open Page**.
 
 <img title="" src="img\selectpage.jpg" alt="IMAGE" width="435">
+
+When the dataset is loaded into the main table, any header that has a name longer than 10 characters will be cut off (followed with ...). This is because the column names will display the data type next to the name. Hovering over the column header will show a tooltip with the full column name.
+
+<img title="" src="img\headers.jpg" alt="IMAGE" width="435">
 
 ### Trim Column
 
@@ -28,13 +32,29 @@ The **Set Null Values** button will replace all empty values (**nil** by default
 * Null
 * Custom
 
-The Custom option allows for any value to be in place of null values.
+The Custom option allows for any value to be in place of null values. There are seperate groups for numerical data and text based data. This way numbers and strings can be set to different values.
 
 <img title="" src="img\replacenull.jpg" alt="IMAGE" width="435">
 
 ### Describe
 
-ToDo
+The **Describe** button will open up a small window with information describing the current dataset. It is the equivalent of [running .describe in Pandas](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.describe.html). There is also a button to export the describe to a CSV file if needed.
+
+<img title="" src="img\Describe.jpg" alt="IMAGE" width="435">
+
+### Info
+
+The **Info** button will open up a small window with information on the dataset such as what data types the columns are and how many non null items are in each column.
+
+<img title="" src="img\info.jpg" alt="IMAGE" width="435">
+
+### Sort
+
+*Sort is currently disabled in this version. In future versions, sort will allow you to sort a column from ascending or descending.*
+
+### Change Data Type
+
+The **Change Data Type** button will attempt to change the data type of the currently selected column. For instance, it'll try to convert a float to int. It cannot change from a text type to a numerical type unless all of the text data is written as numbers (if you have a string column that just has decimals, it should convert these to a float or int). If converting a float to int, it'll attempt to round to the nearest whole number.
 
 ### Rename selected column
 
@@ -43,3 +63,7 @@ Renames the currently selected column. The active column can be selected by eith
 ### Delete selected column
 
 Deletes the currently selected column. The active column can be selected by either clicking the header or clicking any row under that column. A popup will show allowing entry for a new column name.
+
+## Help Button
+
+The help button will open this user guide through the default web browser.
