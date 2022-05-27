@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>397</width>
+    <width>299</width>
     <height>214</height>
    </rect>
   </property>
@@ -97,6 +97,21 @@
       </item>
       <item>
        <widget class="QGroupBox" name="grpText">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>136</width>
+          <height>157</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>136</width>
+          <height>157</height>
+         </size>
+        </property>
         <property name="title">
          <string>Replace Text Null Values</string>
         </property>

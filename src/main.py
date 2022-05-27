@@ -63,8 +63,8 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.btnChangeType.clicked.connect(lambda: uiTypeWindow.confirmTypeChange())
     def cell_was_clicked(self, row, column):
         global activeColumn
-        print(activeColumn)
-        print(f"Row {row} and Column {column} was clicked")
+        ###print(activeColumn)
+        ###print(f"Row {row} and Column {column} was clicked")
         trimInfo.trimText = self.tableWidget.item(row, column).text()
         activeColumn = column
 
@@ -85,7 +85,7 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         if fileLoaded:
             try:
-                print("cell changed")
+                ###print("cell changed")
                 col = self.tableWidget.currentColumn()
                 row = self.tableWidget.currentRow()
                 tableItem = self.tableWidget.item(row, col).text()
@@ -109,14 +109,14 @@ class mainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             #df.sort_values(by=[headerName], inplace=True)
             sortInfo.headerData[activeColumn] = 1
             write_dt_to_qTable(df, table)
-            print(sortInfo.headerData)
+            ###print(sortInfo.headerData)
         else:
             setUndo(df, undoRedoInfo.undoDF)
             headerName = str(list(df)[activeColumn])
             df.sort_values(by=[headerName], ascending=False, inplace=True)
             sortInfo.headerData[activeColumn] = 0
             write_dt_to_qTable(df, table)
-            print(sortInfo.headerData)
+            ###print(sortInfo.headerData)
 
 
 
@@ -142,7 +142,7 @@ class desc_infoWindow(QtWidgets.QMainWindow, Ui_desc_infoWindow):
             self.txtInfo.setText("")
             self.setWindowTitle("Describe")
             descText = str(df.describe())
-            print(df.describe())
+            ###print(df.describe())
             self.txtInfo.setText(descText)
             self.show()
         else:
@@ -153,7 +153,7 @@ class desc_infoWindow(QtWidgets.QMainWindow, Ui_desc_infoWindow):
             df.info(buf=buffer)
             s = buffer.getvalue()
             sSplit = s.split("\n")
-            print(sSplit[3].split())
+            ###print(sSplit[3].split())
 
             #print(str(s.split("\n")))
             self.txtInfo.setText(str(s))
@@ -268,11 +268,11 @@ class trimWindow(QtWidgets.QMainWindow, Ui_trimWindow):
         if trimInfo.isRight == True:
             trimSlider.setRange(-len(trimInfo.trimTextShort), 0)
             trimSlider.setValue(0)
-            print("Right pressed")
+            ###print("Right pressed")
         else:
             trimSlider.setRange(0, len(trimInfo.trimTextShort))
             trimSlider.setValue(0)
-            print("Left pressed")
+            ###print("Left pressed")
 
     def leftSelected(self, selected):
         if selected:
@@ -323,7 +323,8 @@ class typeWindow(QtWidgets.QMainWindow, Ui_typeWindow):
         try:
             df[selectedColumn] = df[selectedColumn].astype(float).astype('int64')
         except Exception as ex:
-            print(ex)
+            pass
+            ###print(ex)
 
 class renameColumn(QtWidgets.QMainWindow, Ui_renameColumnWindow):
     def __init__(self):
@@ -344,6 +345,7 @@ class renameColumn(QtWidgets.QMainWindow, Ui_renameColumnWindow):
         global table
         text = self.txtRename.text()
         if len(text) < 0:
+            pass
             print("Can't be empty")
         else:
             setUndo(df, undoRedoInfo.undoDF)
@@ -441,9 +443,9 @@ def doUndo():
     undoRedoInfo.redoDF = df.copy()
     sortInfo.redoheaderData = list(sortInfo.headerData)
     df = undoRedoInfo.undoDF
-    print(sortInfo.headerData)
+    ###print(sortInfo.headerData)
     sortInfo.headerData = list(sortInfo.undoheaderData)
-    print(sortInfo.headerData)
+    ###print(sortInfo.headerData)
     write_dt_to_qTable(df, table)
     ui.menu_undo.setEnabled(False)
     ui.menu_redo.setEnabled(True)
@@ -510,11 +512,11 @@ def slideChange(text: str, value: int):
     if trimInfo.isRight == False:
         txtTail = text[value:]
         txtHead = text[:-len(text) + value]
-        print(value)
+        ###print(value)
     elif trimInfo.isRight == True:
         txtTail = text[value:]
         txtHead = text[:len(text) + value]
-        print(value)
+        ###print(value)
 
     if trimInfo.isRight == False:
         if value == len(text):
@@ -553,14 +555,14 @@ def commitTrim(value: int):
         df.iloc[:,activeColumn] = trimCol.str[value:]
         write_dt_to_qTable(df, table)
         uiTrimWindow.close()
-        print(trimInfo.trimText[value:])
+        ###print(trimInfo.trimText[value:])
     elif trimInfo.isRight == True:
         setUndo(df, undoRedoInfo.undoDF)
         trimCol = df.iloc[:,activeColumn].astype(str)
         df.iloc[:,activeColumn] = trimCol.str[:value]
         write_dt_to_qTable(df, table)
         uiTrimWindow.close()
-        print(trimInfo.trimText[value:])
+        ###print(trimInfo.trimText[value:])
 
 def closeTrimWindow():
     uiTrimWindow.close()
@@ -574,30 +576,29 @@ def closeNullWindow():
 def commitNullValues():
     global df
     setUndo(df, undoRedoInfo.undoDF)
-    if nullInfo.isCustom1 == True:        
+    headers = list(df)
+    if nullInfo.isCustom1 == True:
         if not nullInfo.isIgnore1:
-            for col in df:
-                if df[col].dtypes in ("int", "float"):
-                    df[col] = df[col].fillna(int(uiNullWindow.txtCustom.text()))
-                    df[col] = df[col].astype('float64', copy=False, errors='ignore')
+            #if df[headers[activeColumn]].dtypes in ("int", "float"):
+            df[headers[activeColumn]] = df[headers[activeColumn]].fillna(uiNullWindow.txtCustom.text())
+            #df[headers[activeColumn]] = df[headers[activeColumn]].astype('float64', copy=False, errors='ignore')
     elif nullInfo.isCustom1 == False:
         if not nullInfo.isIgnore1:
-            for col in df:
-                if df[col].dtypes in ("int", "float"):
-                    df[col] = df[col].fillna(str(nullInfo.nullVal1))
-                    df[col] = df[col].astype('float64', copy=False, errors='ignore')
+            #if df[headers[activeColumn]].dtypes in ("int", "float"):
+            df[headers[activeColumn]] = df[headers[activeColumn]].fillna(nullInfo.nullVal1)
+            #df[headers[activeColumn]] = df[headers[activeColumn]].astype('float64', copy=False, errors='ignore')
+    '''
     if nullInfo.isCustom2 == True:
         if not nullInfo.isIgnore2:
-            for col in df:
-                if df[col].dtypes in ("str", "object"):
-                    df[col] = df[col].fillna(str(uiNullWindow.txtCustom2.text()))
+            if df[headers[activeColumn]].dtypes in ("str", "object"):
+                df[headers[activeColumn]] = df[headers[activeColumn]].fillna(str(uiNullWindow.txtCustom2.text()))
 
     elif nullInfo.isCustom2 == False:
         if not nullInfo.isIgnore2:
-            for col in df:
-                if df[col].dtypes in ("str", "object"):
-                    df[col] = df[col].fillna(str(nullInfo.nullVal2))
-
+            #for col in df:
+            if df[headers[activeColumn]].dtypes in ("str", "object"):
+                df[headers[activeColumn]] = df[headers[activeColumn]].fillna(str(nullInfo.nullVal2))
+'''
     write_dt_to_qTable(df, table)
     uiNullWindow.close()
 
@@ -649,7 +650,8 @@ def changePage(isBack: bool = False):
                 write_dt_to_pageSelect(dfPage, pageTable)
                 uiPageSelect.lblPageNum.setText(f"Page {pageNum + 1}")
     except:
-        print("null value")
+        pass
+        ###print("null value")
 
 def openPage():
     global df
@@ -673,6 +675,7 @@ def openFile():
     try:
         filename = QtWidgets.QFileDialog.getOpenFileName(None, 'Select Dir', desktopLoc, "CSV or Excel files (*.csv *.xlsx)")[0]
     except:
+        pass
         print("No file found")
     if filename:
         if ".csv" in filename:
@@ -704,9 +707,11 @@ def openFile():
             elif len(xls.sheet_names) > 1:
                 selectPage(filename)
             else:
-                print("Empty Excel file")
+                pass
+                ###print("Empty Excel file")
     else:
-        print("Empty filename")
+        pass
+        ###print("Empty filename")
 
 def write_dt_to_qTable(df: pd.DataFrame, table: QtWidgets.QTableWidgetItem):
     global fileLoaded
@@ -736,7 +741,7 @@ def saveFile():
     global dfNew
     try:
         filename = QtWidgets.QFileDialog.getSaveFileName(None, 'Save File', desktopLoc, "CSV Files(*.csv)")[0]
-        print(filename)
+        ###print(filename)
         df.to_csv(str(filename), index=False)
     except:
         pass
@@ -816,6 +821,8 @@ trimRadioLeft = uiTrimWindow.radioLeft
 loadData()
 # Do an update check
 checkForUpdates()
+# Hide the second part of the null window
+uiNullWindow.grpText.setVisible(False)
 
 ui.tableWidget.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignLeft)
 # Show main window and exec the program
