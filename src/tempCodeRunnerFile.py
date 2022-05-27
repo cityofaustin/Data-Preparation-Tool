@@ -1,1 +1,1 @@
-populateLists
+trimSlider

@@ -118,6 +118,16 @@
       </attribute>
      </widget>
     </item>
+    <item>
+     <widget class="QLabel" name="lblUpdate">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="openExternalLinks">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">

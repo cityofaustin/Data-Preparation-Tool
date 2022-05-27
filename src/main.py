@@ -4,7 +4,9 @@ author: SappI
 '''
 from distutils import errors
 import os, sys, pickle, platform, io
+from turtle import update
 import pandas as pd
+import updateCheck
 import webbrowser
 from PyQt5 import QtWidgets, QtGui, QtCore
 
@@ -20,7 +22,7 @@ from ui.typeWindow import Ui_typeWindow
 
 # Update this with each release
 appName = "Data Preparation Tool"
-versionNumber = "0.0.1 Pre-Release"
+versionNumber = "1.0.0"
 appPath = os.path.dirname(__file__)
 platName = platform.system()
 dataLoc = QtCore.QStandardPaths.standardLocations(QtCore.QStandardPaths.DataLocation)[0] + f'/{appName}'
@@ -720,6 +722,11 @@ def saveFile():
     except:
         pass
 
+def checkForUpdates():
+    check = updateCheck.checkUpdates(versionNumber)
+    if not check:
+        #ui.lblUpdate.setText('<a href="https://github.com/cityofaustin/Data-Preparation-Tool/releases">New Version Available. Click here to download.</a>')
+        ui.lblUpdate.setText("<a href=\"https://github.com/cityofaustin/Data-Preparation-Tool/releases\">New Version Available. Click here to download.</a>")
 def iconFromBase64(base64: bytes) -> QtGui.QIcon:
     pixmap = QtGui.QPixmap()
     pixmap.loadFromData(QtCore.QByteArray.fromBase64(base64))
@@ -788,6 +795,9 @@ trimRadioLeft = uiTrimWindow.radioLeft
 
 # Load in the image data from res.dat
 loadData()
+# Do an update check
+checkForUpdates()
+
 ui.tableWidget.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignLeft)
 # Show main window and exec the program
 toggleItems(False)
