@@ -3,7 +3,7 @@
 # Data Preparation Tool Guide
 **Quick links**  
 [Opening a file](#opening-a-file) | [Trim Column](#trim-column) | [Set Null Values](#set-null-values) | [Describe](#describe) | [Info](#info) | [Sort](#sort)  
-[Change Data Type](#change-data-type)  | [Rename selected column](#rename-selected-column) | [Delete selected column](#delete-selected-column) | [Help button](#help-button)
+[Change Data Type](#change-data-type)  | [Rename selected column](#rename-selected-column) | [Delete selected column](#delete-selected-column) | [Help button](#help-button) | [Updates](#updates)
 
 ### Opening a file
 
@@ -12,10 +12,6 @@ First step is to open a file. Data Preparation Tool accepts both **CSV** and **E
 If the Excel file has multiple pages, you will be presented with the **Select Page window**. This will preview the pages in the document. You can go forward and back until you get to the page you'd like to work with, and click on **Open Page**.
 
 <img title="" src="img\selectpage.jpg" alt="IMAGE" width="435">
-
-When the dataset is loaded into the main table, any header that has a name longer than 10 characters will be cut off (followed with ...). This is because the column names will display the data type next to the name. Hovering over the column header will show a tooltip with the full column name.
-
-<img title="" src="img\headers.jpg" alt="IMAGE" width="435">
 
 ### Trim Column
 
@@ -68,3 +64,7 @@ Deletes the currently selected column. The active column can be selected by eith
 ## Help Button
 
 The help button will open this user guide through the default web browser.
+
+## Updates
+
+The tool will check for new versions on Github when opening. If there is a newer version, a link will appear at the bottom of the window indicating that a new version is available for download.
