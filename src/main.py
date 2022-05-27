@@ -2,10 +2,7 @@
 DataCleanTool - 2022
 author: SappI
 '''
-from distutils import errors
-from email import header
 import os, sys, pickle, platform, io
-from turtle import update
 import pandas as pd
 import updateCheck
 import webbrowser
@@ -138,14 +135,16 @@ class desc_infoWindow(QtWidgets.QMainWindow, Ui_desc_infoWindow):
     def openWindow(self, isDesc: bool):
         global df
         if isDesc:
+            headers = list(df)
             self.btnExport.setVisible(True)
             self.txtInfo.setText("")
             self.setWindowTitle("Describe")
-            descText = str(df.describe())
+            descText = str(df[headers[activeColumn]].describe())
             ###print(df.describe())
             self.txtInfo.setText(descText)
             self.show()
         else:
+            headers = list(df)
             self.btnExport.setVisible(False)
             self.txtInfo.setText("")
             self.setWindowTitle("Info")
