@@ -68,3 +68,5 @@ The help button will open this user guide through the default web browser.
 ## Updates
 
 The tool will check for new versions on Github when opening. If there is a newer version, a link will appear at the bottom of the window indicating that a new version is available for download.
+
+<img title="" src="img\updates.jpg" alt="IMAGE" width="435">
